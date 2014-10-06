@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 )
 
@@ -25,6 +26,10 @@ func TestRotter(t *testing.T) {
 	}
 }
 
+func neq_err(v1, v2, v3 byte) string {
+	return fmt.Sprintf("rot13ing '%v' did not eql '%v', it equaled '%v'", string(v1), string(v2), string(v3))
+}
+
 func TestRot13(t *testing.T) {
 	r13 := []byte("abcdefghijklmnopqrstuvwxyz!5")
 	R13 := []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ*4")
@@ -32,14 +37,14 @@ func TestRot13(t *testing.T) {
 	E13 := []byte("NOPQRSTUVWXYZABCDEFGHIJKLM*4")
 
 	for i, v := range r13 {
-		if Rot13(v) != e13[i] {
-			t.Error("rot13ing", string(v), "did not equal", string(e13[i]))
+		if val := Rot13(v); val != e13[i] {
+			t.Error(neq_err(v, val, e13[i]))
 		}
 	}
 
 	for i, v := range R13 {
-		if Rot13(v) != E13[i] {
-			t.Error("Oh yes")
+		if val := Rot13(v); val != E13[i] {
+			t.Error(neq_err(v, val, E13[i]))
 		}
 	}
 }
