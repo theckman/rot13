@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"bytes"
+	"testing"
 )
 
 func TestRotter(t *testing.T) {
