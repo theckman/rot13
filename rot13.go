@@ -1,54 +1,33 @@
+// rot13 utility
+// this was used as a short task to help learn Golang -- really shouldn't be taken seriously
+//
+// released under the MIT license
+// Copyright 2014 Tim Heckman <t@heckman.io>
+
 package main
 
 import (
-	"bufio"
-	"io"
+	"fmt"
+	"github.com/theckman/rot13/rot13"
+	"os"
 )
 
-// rot13 converter for a byte value
-func Rot13(b byte) byte {
-	// variables used to define the upper and lower bounds of the alphabet range
-	var a, z byte
+func main() {
+	// create a channel for goroutine communication
+	c := make(chan byte)
 
-	// determine whether it's an upper or lowercase letter
-	// if it's not a-zA-Z, return the byte as-is
-	switch {
-	case 'a' <= b && b <= 'z':
-		a, z = 'a', 'z'
-	case 'A' <= b && b <= 'Z':
-		a, z = 'A', 'Z'
-	default:
-		return b
-	}
+	// crate the goroutine for rotter()
+	go rot13.Rotter(os.Stdin, c)
 
-	// convert the byte to its rot13 counterpart and return it
-	return (b-a+13)%(z-a+1) + a
-}
-
-// go routine runner for sending stdin through ror13 conversion
-func Rotter(io_r io.Reader, ch chan byte) {
-	// buf is a single byte used for reading a single byte from stdin
-	// err is whether or not we've hit an error reading the next byte (EOF)
-	var buf byte
-	var err error
-
-	// create a new buffered IO reader for stdin
-	r := bufio.NewReader(io_r)
-
-	// loop until ReadByte() returns an error
+	// forever loop and print any values sent through the channel
+	// break the loop on cahnnel close
 	for {
-		// read stdin one byte at a time
-		buf, err = r.ReadByte()
+		b, ok := <-c
 
-		// if it errored, bail out
-		if err != nil {
+		if !ok {
 			break
 		}
 
-		// send the rot13 value of the last byte through the channel
-		ch <- Rot13(buf)
+		fmt.Print(string(b))
 	}
-
-	// close the channel when finished to signal that we should exit
-	close(ch)
 }
