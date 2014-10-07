@@ -1,4 +1,4 @@
-package main
+package rot13
 
 import (
 	"bytes"
