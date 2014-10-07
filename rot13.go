@@ -13,6 +13,9 @@ import (
 )
 
 func main() {
+	var b byte
+	var ok bool
+
 	// create a channel for goroutine communication
 	c := make(chan byte)
 
@@ -22,7 +25,7 @@ func main() {
 	// forever loop and print any values sent through the channel
 	// break the loop on cahnnel close
 	for {
-		b, ok := <-c
+		b, ok = <-c
 
 		if !ok {
 			break
